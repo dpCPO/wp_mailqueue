@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="EXT:wp_mailqueue/Resources/Private/Language/locallang" date="2021-03-10T15:42:22Z" product-name="wp_mailqueue">
+		<header/>
+		<body>
+			<trans-unit id="tx_wpmailqueue_domain_model_mail" resname="tx_wpmailqueue_domain_model_mail">
+				<source>Mail</source>
+			</trans-unit>
+			<trans-unit id="tx_wpmailqueue_domain_model_mail.subject" resname="tx_wpmailqueue_domain_model_mail.subject">
+				<source>Subject</source>
+			</trans-unit>
+			<trans-unit id="tx_wpmailqueue_domain_model_mail.body" resname="tx_wpmailqueue_domain_model_mail.body">
+				<source>Body</source>
+			</trans-unit>
+			<trans-unit id="tx_wpmailqueue_domain_model_mail.bodyHtml" resname="tx_wpmailqueue_domain_model_mail.bodyHtml">
+				<source>Body HTML</source>
+			</trans-unit>
+			<trans-unit id="tx_wpmailqueue_domain_model_mail.sender" resname="tx_wpmailqueue_domain_model_mail.sender">
+				<source>Sender</source>
+			</trans-unit>
+			<trans-unit id="tx_wpmailqueue_domain_model_mail.recipient" resname="tx_wpmailqueue_domain_model_mail.recipient">
+				<source>Recipient</source>
+			</trans-unit>
+			<trans-unit id="tx_wpmailqueue_domain_model_mail.cc" resname="tx_wpmailqueue_domain_model_mail.cc">
+				<source>Cc</source>
+			</trans-unit>
+			<trans-unit id="tx_wpmailqueue_domain_model_mail.bcc" resname="tx_wpmailqueue_domain_model_mail.bcc">
+				<source>Bcc</source>
+			</trans-unit>
+			<trans-unit id="tx_wpmailqueue_domain_model_mail.attachements" resname="tx_wpmailqueue_domain_model_mail.attachements">
+				<source>Attachements</source>
+			</trans-unit>
+			<trans-unit id="tx_wpmailqueue_domain_model_mail.date_sent" resname="tx_wpmailqueue_domain_model_mail.date_sent">
+				<source>Date Sent</source>
+			</trans-unit>
+			<trans-unit id="tx_wpmailqueue_domain_model_mail.type" resname="tx_wpmailqueue_domain_model_mail.type">
+				<source>Type</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

@@ -1,0 +1,14 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  WEBprofil\WpMailqueue\:
+    resource: '../Classes/*'
+
+  WEBprofil\WpMailqueue\Command\MailqueueCommand:
+    tags:
+      - name: 'console.command'
+        command: 'mailqueue:run'
+        description: 'Sends the e-mails in the mailqueue.'

@@ -1,0 +1,33 @@
+{
+    "name": "webprofil/wp-mailqueue",
+    "type": "typo3-cms-extension",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nikita Hovratov",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "typo3/cms-core": "^10.4",
+        "leuchtfeuer/secure-downloads": "^4"
+    },
+    "autoload": {
+        "psr-4": {
+            "WEBprofil\\WpMailqueue\\": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "WEBprofil\\WpMailqueue\\Tests\\": "Tests"
+        }
+    },
+    "replace": {
+        "typo3-ter/wp-mailqueue": "self.version"
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "wp_mailqueue"
+        }
+    }
+}

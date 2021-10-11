@@ -1,0 +1,23 @@
+# Module configuration
+module.tx_wpmailqueue {
+  persistence {
+    storagePid = {$module.tx_wpmailqueue_maillist.persistence.storagePid}
+  }
+
+  view {
+    templateRootPaths.0 = EXT:wp_mailqueue/Resources/Private/Backend/Templates/
+    templateRootPaths.1 = {$module.tx_wpmailqueue_maillist.view.templateRootPath}
+    partialRootPaths.0 = EXT:wp_mailqueue/Resources/Private/Backend/Partials/
+    partialRootPaths.1 = {$module.tx_wpmailqueue_maillist.view.partialRootPath}
+    layoutRootPaths.0 = EXT:wp_mailqueue/Resources/Private/Backend/Layouts/
+    layoutRootPaths.1 = {$module.tx_wpmailqueue_maillist.view.layoutRootPath}
+  }
+}
+
+plugin.tx_wpmailqueue {
+  persistence {
+    classes {
+      WEBprofil\WpMailqueue\Domain\Model\Mail.newRecordStoragePid =
+    }
+  }
+}
