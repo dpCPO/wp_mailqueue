@@ -2,18 +2,21 @@
 
 namespace WEBprofil\WpMailqueue\Controller;
 
-use Bitmotion\SecureDownloads\Factory\SecureLinkFactory;
-use Bitmotion\SecureDownloads\Service\SecureDownloadService;
+use Deployer\Host\Storage;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\View\BackendTemplateView;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Exception;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Http\RedirectResponse;
 use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\Resource\ResourceFactory;
+use TYPO3\CMS\Core\Resource\ResourceStorage;
+use TYPO3\CMS\Core\Resource\StorageRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
@@ -72,27 +75,46 @@ class BackendController extends ActionController
             $url = $uriBuilder->buildUriFromRoutePath('/delete', ['uid' => $mail['uid']]);
             $jsonMail['actions'] = '<a class="js-delete-mail btn btn-default" data-href="' . $url . '" title="Mail löschen">' . $iconMarkup . '</a>';
 
-            $securedAttachements = [];
-            $secureDownloadService = GeneralUtility::makeInstance(SecureDownloadService::class);
+            $storageRepository = GeneralUtility::makeInstance(StorageRepository::class);
+            $storages = $storageRepository->findAll();
+
+            $mailAttachements = [];
             $attachements = explode(',', $jsonMail['attachements']);
             foreach ($attachements as $attachement) {
-                if ($secureDownloadService->pathShouldBeSecured($attachement)) {
-                    $securedUrl = GeneralUtility::makeInstance(SecureLinkFactory::class, $attachement);
-                    $securedAttachements[] = [
-                        'name' => $attachement,
-                        'url' => $securedUrl->getUrl(),
-                    ];
-                } else {
-                    $securedAttachements[] = [
-                        'name' => $attachement,
-                        'url' => $attachement
-                    ];
+                $fileName = $attachement;
+                $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+
+                // cleanup filepaths to find file object
+                /** @var ResourceStorage $storage */
+                foreach ($storages as $storage) {
+                    $storageRecord = $storage->getStorageRecord();
+                    $configuration = $storage->getConfiguration();
+                    $fileName = str_replace($configuration['basePath'], $storageRecord['uid'].':', $fileName);
                 }
+
+                // search file object
+                $file = null;
+                try {
+                    $file = $resourceFactory->getFileObjectFromCombinedIdentifier($fileName);
+                } catch (\InvalidArgumentException $e) {                }
+
+                $fileData = [
+                    'name' => $attachement
+                ];
+
+                if ($file) {
+                    $fileData['url'] = $file->getPublicUrl();
+                }
+                $mailAttachements[] = $fileData;
             }
 
             $attachementsHtml = [];
-            foreach ($securedAttachements as $attachement) {
-                $attachementsHtml[] = '<a href="/' . $attachement['url'] . '" target="_blank">' . $attachement['name'] . '</a>';
+            foreach ($mailAttachements as $attachement) {
+                if ($attachement['url']) {
+                    $attachementsHtml[] = '<a href="/' . $attachement['url'] . '" target="_blank">' . $attachement['name'] . '</a>';
+                } else {
+                    $attachementsHtml[] = '<span class="bg-danger" title="File is missing in filesystem">' . $attachement['name'] . '</span>';
+                }
             }
 
             $jsonMail['attachements'] = implode(', ', $attachementsHtml);
@@ -163,3 +185,4 @@ class BackendController extends ActionController
             ->getQueryBuilderForTable(self::$table);
     }
 }
+
