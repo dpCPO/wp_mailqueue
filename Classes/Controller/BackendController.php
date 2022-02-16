@@ -111,7 +111,7 @@ class BackendController extends ActionController
             $attachementsHtml = [];
             foreach ($mailAttachements as $attachement) {
                 if ($attachement['url']) {
-                    $attachementsHtml[] = '<a href="/' . $attachement['url'] . '" target="_blank">' . $attachement['name'] . '</a>';
+                    $attachementsHtml[] = '<a href="' . $attachement['url'] . '" target="_blank">' . $attachement['name'] . '</a>';
                 } else {
                     $attachementsHtml[] = '<span class="bg-danger" title="File is missing in filesystem">' . $attachement['name'] . '</span>';
                 }
