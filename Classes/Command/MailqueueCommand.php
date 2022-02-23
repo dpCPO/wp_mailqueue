@@ -12,6 +12,7 @@ use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Mail\FluidEmail;
 use TYPO3\CMS\Core\Mail\Mailer;
+use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use WEBprofil\WpMailqueue\Domain\Model\Mail;
 
@@ -90,7 +91,10 @@ class MailqueueCommand extends Command
         }
 
         foreach ($mailModel->getAttachementsArray() as $attachement) {
-            $mail->attachFromPath(Environment::getPublicPath() . '/' . $attachement);
+            $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+            $fileObject = $resourceFactory->getFileObjectFromCombinedIdentifier($attachement);
+            $fullPath = $fileObject->getStorage()->getConfiguration()['basePath'] . substr($fileObject->getIdentifier(), 1);
+            $mail->attachFromPath(Environment::getPublicPath() . '/' . $fullPath);
         }
 
         if ($mailModel->getCc()) {
@@ -106,3 +110,4 @@ class MailqueueCommand extends Command
         return $mailer->getSentMessage() !== null;
     }
 }
+
