@@ -1,3 +1,4 @@
+
 # TYPO3 extension `wp_mailqueue`
 
 This extension offers the possibility, to send mails from your extbase extension via a Mailqueue.
