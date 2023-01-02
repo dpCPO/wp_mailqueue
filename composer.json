@@ -3,10 +3,14 @@
     "type": "typo3-cms-extension",
     "description": "",
     "authors": [
-        {
-            "name": "Nikita Hovratov",
-            "role": "Developer"
-        }
+		{
+			"name": "Gernot Ploiner",
+			"role": "Developer"
+		},
+		{
+			"name": "Nikita Hovratov",
+			"role": "Developer"
+		}
     ],
     "require": {
         "typo3/cms-core": "^11.5"
