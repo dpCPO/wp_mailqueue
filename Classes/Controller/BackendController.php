@@ -2,6 +2,8 @@
 
 namespace WEBprofil\WpMailqueue\Controller;
 
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
+use Psr\Http\Message\ResponseInterface;
 use Deployer\Host\Storage;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
@@ -22,23 +24,24 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 class BackendController extends ActionController
 {
-    /**
-     * Backend Template Container
-     *
-     * @var string
-     */
-    protected $defaultViewObjectName = BackendTemplateView::class;
-
     protected static $table = 'tx_wpmailqueue_domain_model_mail';
-
-    public function listAction()
+    private ModuleTemplateFactory $moduleTemplateFactory;
+    public function __construct(ModuleTemplateFactory $moduleTemplateFactory)
     {
+        $this->moduleTemplateFactory = $moduleTemplateFactory;
+    }
+
+    public function listAction(): ResponseInterface
+    {
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
         $pageRenderer->loadRequireJsModule('TYPO3/CMS/WpMailqueue/DataTables');
         $pageRenderer->loadRequireJsModule('TYPO3/CMS/WpMailqueue/Mail');
+        $moduleTemplate->setContent($this->view->render());
+        return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
-    public function deleteAction(ServerRequestInterface $request): Response
+    public function deleteAction(ServerRequestInterface $request): ResponseInterface
     {
         $queryBuilder = $this->getQueryBuilder();
         $queryBuilder
@@ -61,7 +64,7 @@ class BackendController extends ActionController
             ->count('uid')
             ->from(self::$table)
             ->execute()
-            ->fetchColumn();
+            ->fetchOne();
 
         $jsonMails = [];
 
@@ -69,7 +72,7 @@ class BackendController extends ActionController
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         $iconMarkup = GeneralUtility::makeInstance(IconFactory::class)->getIcon('actions-delete', Icon::SIZE_SMALL)->render();
         $result = $this->buildQuery($params);
-        while ($mail = $result->fetch()) {
+        while ($mail = $result->fetchAssociative()) {
             $jsonMail = $mail;
             $jsonMail['date_sent'] = $jsonMail['date_sent'] ? date('d.m.Y H:i', $jsonMail['date_sent']) : 'In der Warteschlange';
             $url = $uriBuilder->buildUriFromRoutePath('/delete', ['uid' => $mail['uid']]);
@@ -173,7 +176,7 @@ class BackendController extends ActionController
         }
 
         if ($returnCount) {
-            return $queryBuilder->execute()->fetchColumn();
+            return $queryBuilder->execute()->fetchOne();
         } else {
             return $queryBuilder->execute();
         }
