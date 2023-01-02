@@ -37,7 +37,7 @@ MailqueueUtility::addToMailqueue($mail);
 Take a look into the Backend module of wp_mailqueue. It is self explained. Here you can have a look to the queued and sent mails.
 You can delete queued mails.
 
-## Scheduler Taks for sending
+## Scheduler Tasks for sending
 Add and activate the Scheduler Task to activate the Mailsending from the mailqueue:
 Execute console commands
 mailqueue:run
