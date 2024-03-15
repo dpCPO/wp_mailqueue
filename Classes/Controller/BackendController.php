@@ -1,4 +1,10 @@
-<?php
+<?php /** @noinspection ALL */
+
+/** @noinspection ALL */
+
+/** @noinspection PhpFullyQualifiedNameUsageInspection */
+
+/** @noinspection PhpFullyQualifiedNameUsageInspection */
 
 namespace WEBprofil\WpMailqueue\Controller;
 
@@ -48,7 +54,7 @@ class BackendController extends ActionController
             ->update(self::$table)
             ->set('deleted', 1)
             ->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($request->getQueryParams()['uid'], \PDO::PARAM_INT)))
-            ->execute();
+            ->executeStatement();
 
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         $url = $uriBuilder->buildUriFromRoute('web_WpMailqueueMaillist');
@@ -176,9 +182,9 @@ class BackendController extends ActionController
         }
 
         if ($returnCount) {
-            return $queryBuilder->execute()->fetchOne();
+            return $queryBuilder->executeQuery()->fetchOne();
         } else {
-            return $queryBuilder->execute();
+            return $queryBuilder->executeQuery();
         }
     }
 

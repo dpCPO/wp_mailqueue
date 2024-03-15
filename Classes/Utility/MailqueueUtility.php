@@ -38,6 +38,6 @@ class MailqueueUtility
                     'type' => $mail->getType()
                 ]
             )
-            ->execute();
+            ->executeStatement();
     }
 }
