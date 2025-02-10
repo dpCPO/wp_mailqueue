@@ -6,14 +6,12 @@ return [
         'label' => 'subject',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
+        'cruser_id' => 'cruser_id',
         'delete' => 'deleted',
         'enablecolumns' => [
         ],
         'searchFields' => 'subject,body,sender,cc,bcc,attachements,date_sent,type',
-        'iconfile' => 'EXT:wp_mailqueue/Resources/Public/Icons/tx_wpmailqueue_domain_model_mail.gif',
-        'security' => [
-            'ignorePageTypeRestriction' => true,
-        ],
+        'iconfile' => 'EXT:wp_mailqueue/Resources/Public/Icons/tx_wpmailqueue_domain_model_mail.gif'
     ],
     'types' => [
         '1' => ['showitem' => 'subject, body, sender, cc, bcc, attachements, date_sent, type'],
@@ -98,7 +96,9 @@ return [
             'exclude' => false,
             'label' => 'LLL:EXT:wp_mailqueue/Resources/Private/Language/locallang_db.xlf:tx_wpmailqueue_domain_model_mail.date_sent',
             'config' => [
-                'type' => 'datetime',
+                'type' => 'input',
+                'renderType' => 'inputDateTime',
+                'eval' => 'int,datetime'
             ],
         ],
         'type' => [

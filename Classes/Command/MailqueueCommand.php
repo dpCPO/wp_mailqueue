@@ -24,7 +24,7 @@ class MailqueueCommand extends Command
         $this->addArgument('limit', InputArgument::OPTIONAL, 'Define the maximum number of mails to send per run.', 10);
     }
 
-    public function execute(InputInterface $input, OutputInterface $output): int
+    public function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
         $io->title($this->getDescription());
@@ -38,7 +38,7 @@ class MailqueueCommand extends Command
             ->where($queryBuilder->expr()->eq('date_sent', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)))
             ->orderBy('crdate')
             ->setMaxResults((int)$input->getArgument('limit'))
-            ->executeQuery();
+            ->execute();
 
         while ($mail = $mails->fetch()) {
             $mailModel = new Mail();
@@ -56,10 +56,11 @@ class MailqueueCommand extends Command
 
             if ($success) {
                 $queryBuilder = $this->getQueryBuilder();
-                $queryBuilder->update('tx_wpmailqueue_domain_model_mail');
-                $queryBuilder->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($mail['uid'], \PDO::PARAM_INT)));
-                    $queryBuilder->set('date_sent', time());
-                    $queryBuilder->executeStatement();
+                $queryBuilder
+                    ->update('tx_wpmailqueue_domain_model_mail')
+                    ->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($mail['uid'], \PDO::PARAM_INT)))
+                    ->set('date_sent', time())
+                    ->execute();
             }
         }
 

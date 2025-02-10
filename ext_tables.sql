@@ -7,7 +7,7 @@ CREATE TABLE tx_wpmailqueue_domain_model_mail (
 	recipient varchar(255) DEFAULT '' NOT NULL,
 	cc varchar(255) DEFAULT '' NOT NULL,
 	bcc varchar(255) DEFAULT '' NOT NULL,
-	attachements varchar(255) DEFAULT '' NOT NULL,
+	attachements text DEFAULT '' NOT NULL,
 	date_sent int(11) DEFAULT 0 NOT NULL,
 	type varchar(255) DEFAULT '' NOT NULL
 
