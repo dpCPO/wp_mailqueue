@@ -91,10 +91,17 @@ class MailqueueCommand extends Command
         }
 
         foreach ($mailModel->getAttachementsArray() as $attachement) {
+        	// Check wether we use TYPO3 Storage or simple file attachments
+        	// ATTENTION: Works only with a good os.
+        	if( is_string($attachement) && str_starts_with($attachement, "/") ){
+        		$mail->attachFromPath( $attachement );
+        	}
+        	else {
             $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
             $fileObject = $resourceFactory->getFileObjectFromCombinedIdentifier($attachement);
             $fullPath = $fileObject->getStorage()->getConfiguration()['basePath'] . substr($fileObject->getIdentifier(), 1);
             $mail->attachFromPath(Environment::getPublicPath() . '/' . $fullPath);
+        	}
         }
 
         if ($mailModel->getCc()) {

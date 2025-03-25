@@ -125,11 +125,17 @@ class BackendController extends ActionController
 
             $attachementsHtml = [];
             foreach ($mailAttachements as $attachement) {
-                if ($attachement['url']) {
-                    $attachementsHtml[] = '<a href="' . $attachement['url'] . '" target="_blank">' . $attachement['name'] . '</a>';
-                } else {
-                    $attachementsHtml[] = '<span class="bg-danger" title="File is missing in filesystem">' . $attachement['name'] . '</span>';
-                }
+            	if( !key_exists('url', $attachement) && 
+            			key_exists('name', $attachement) && 
+            			str_starts_with( $attachement['name'], "/") ) {
+              	$attachementsHtml[] = $attachement['name'];
+           		}
+           		else if( key_exists('url', $attachement) ){
+           			$attachementsHtml[] = '<a href="' . $attachement['url'] . '" target="_blank">' . $attachement['name'] . '</a>';
+           		}
+             	else {
+								$attachementsHtml[] = '<span class="bg-danger" title="File is missing in filesystem">' . $attachement['name'] . '</span>';
+              }
             }
 
             $jsonMail['attachements'] = implode(', ', $attachementsHtml);
