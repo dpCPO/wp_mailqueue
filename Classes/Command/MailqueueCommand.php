@@ -15,6 +15,7 @@ use TYPO3\CMS\Core\Mail\Mailer;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use WEBprofil\WpMailqueue\Domain\Model\Mail;
+use Doctrine\DBAL\Query\QueryBuilder;
 
 class MailqueueCommand extends Command
 {
@@ -35,12 +36,12 @@ class MailqueueCommand extends Command
         $mails = $queryBuilder
             ->select('*')
             ->from('tx_wpmailqueue_domain_model_mail')
-            ->where($queryBuilder->expr()->eq('date_sent', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)))
+            ->where($queryBuilder->expr()->eq('date_sent', $queryBuilder->createNamedParameter(0, \Doctrine\DBAL\ParameterType::INTEGER) ))
             ->orderBy('crdate')
             ->setMaxResults((int)$input->getArgument('limit'))
             ->executeQuery();
 
-        while ($mail = $mails->fetch()) {
+        while( $mail = $mails->fetchAssociative() ){
             $mailModel = new Mail();
             $mailModel->setSenderString($mail['sender']);
             $mailModel->setRecipientString($mail['recipient']);
@@ -57,7 +58,7 @@ class MailqueueCommand extends Command
             if ($success) {
                 $queryBuilder = $this->getQueryBuilder();
                 $queryBuilder->update('tx_wpmailqueue_domain_model_mail');
-                $queryBuilder->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($mail['uid'], \PDO::PARAM_INT)));
+                $queryBuilder->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($mail['uid'],  \Doctrine\DBAL\ParameterType::INTEGER )));
                     $queryBuilder->set('date_sent', time());
                     $queryBuilder->executeStatement();
             }
@@ -66,7 +67,7 @@ class MailqueueCommand extends Command
         return Command::SUCCESS;
     }
 
-    protected function getQueryBuilder()
+    protected function getQueryBuilder() : QueryBuilder
     {
         return GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_wpmailqueue_domain_model_mail');
