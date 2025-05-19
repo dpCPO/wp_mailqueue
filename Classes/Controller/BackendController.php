@@ -21,6 +21,7 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Core\Page\AssetCollector;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 
 class BackendController extends ActionController
 {
@@ -44,9 +45,11 @@ class BackendController extends ActionController
 			
 			/** @var PageRenderer $pageRenderer */
 			$pageRenderer = GeneralUtility::makeInstance ( PageRenderer::class );
-	
-			$pageRenderer->loadJavaScriptModule ( '@webprofil/wp-mailqueue/datatables.js' );
-// 			$pageRenderer->loadJavaScriptModule ( '@webprofil/wp-mailqueue/Mail.js' );
+			
+			$pageRenderer->addJsFile("EXT:core/Resources/Public/JavaScript/Contrib/jquery.js");
+			$pageRenderer->addJsFile("EXT:wp_mailqueue/Resources/Public/JavaScript/datatables.js");
+			//$pageRenderer->loadJavaScriptModule ( '@webprofil/wp-mailqueue/datatables.js' );
+			$pageRenderer->loadJavaScriptModule ( '@webprofil/wp-mailqueue/Mail.js' );
 	
 			$moduleTemplate = $this->moduleTemplateFactory->create ( $this->request );
 			return $moduleTemplate->renderResponse ( 'Backend/List' );
@@ -74,7 +77,7 @@ class BackendController extends ActionController
         $count = $queryBuilder
             ->count('uid')
             ->from(self::$table)
-            ->execute()
+            ->executeQuery()
             ->fetchOne();
 
         $jsonMails = [];
@@ -209,7 +212,7 @@ class BackendController extends ActionController
         }
     }
 
-    protected function getQueryBuilder()
+    protected function getQueryBuilder() : QueryBuilder
     {
         return GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable(self::$table);

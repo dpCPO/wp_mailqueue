@@ -1,8 +1,10 @@
-import $ from 'jquery';
-import {PageLoadedEvent} from '@typo3/core/event/page-loaded';
+// PageRenderer sichert ab, dass jquery und datatables.js vorher geladen wurde
+// import $ from 'jquery';
+// import '@webprofil/wp-mailqueue/datatables.js';
+
 import Modal from '@typo3/backend/modal.js';
 import Severity from '@typo3/backend/severity.js';
-import '@webprofil/wp-mailqueue/datatables.js';
+import DocumentService from '@typo3/core/document-service.js';
 
 const language = {
     "sEmptyTable": "Keine Daten in der Tabelle vorhanden",
@@ -28,7 +30,9 @@ const language = {
     }
 };
 
-document.addEventListener( PageLoadedEvent.type, function () {
+
+DocumentService.ready().then( () => {
+
     const maillogTable = $('#maillog-table');
 
     if (maillogTable.length) {
