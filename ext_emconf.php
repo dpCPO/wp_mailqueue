@@ -18,10 +18,10 @@ $EM_CONF[$_EXTKEY] = [
     'author_email' => 'gp@webprofil.at',
     'state' => 'beta',
     'clearCacheOnLoad' => true,
-    'version' => '2.1.0',
+    'version' => '3.1.0',
     'constraints' => [
         'depends' => [
-            'typo3' => '11.5.0-11.5.99'
+            'typo3' => '13.4.0-13.4.99'
         ],
         'conflicts' => [],
         'suggests' => [],

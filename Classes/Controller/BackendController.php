@@ -4,12 +4,9 @@ namespace WEBprofil\WpMailqueue\Controller;
 
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use Psr\Http\Message\ResponseInterface;
-use Deployer\Host\Storage;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
-use TYPO3\CMS\Backend\View\BackendTemplateView;
 use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Exception;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Http\RedirectResponse;
 use TYPO3\CMS\Core\Http\Response;
@@ -23,6 +20,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\PathUtility;
+use TYPO3\CMS\Core\Page\AssetCollector;
 
 class BackendController extends ActionController
 {
@@ -32,16 +30,27 @@ class BackendController extends ActionController
     {
         $this->moduleTemplateFactory = $moduleTemplateFactory;
     }
-
-    public function listAction(): ResponseInterface
-    {
-        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-        $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
-        $pageRenderer->loadRequireJsModule('TYPO3/CMS/WpMailqueue/DataTables');
-        $pageRenderer->loadRequireJsModule('TYPO3/CMS/WpMailqueue/Mail');
-        $moduleTemplate->setContent($this->view->render());
-        return $this->htmlResponse($moduleTemplate->renderContent());
-    }
+    
+		public function listAction(): ResponseInterface {
+			
+// 			/** @var AssetCollector $assetCollector */
+// 			$assetCollector = GeneralUtility::makeInstance(AssetCollector::class);
+// 			$assetCollector->addJavaScript(
+// 					'core-jquery',
+// 					'EXT:core/Resources/Public/JavaScript/Contrib/jquery.js',
+// 					['type' => 'module']
+// 			);
+			
+			
+			/** @var PageRenderer $pageRenderer */
+			$pageRenderer = GeneralUtility::makeInstance ( PageRenderer::class );
+	
+			$pageRenderer->loadJavaScriptModule ( '@webprofil/wp-mailqueue/datatables.js' );
+// 			$pageRenderer->loadJavaScriptModule ( '@webprofil/wp-mailqueue/Mail.js' );
+	
+			$moduleTemplate = $this->moduleTemplateFactory->create ( $this->request );
+			return $moduleTemplate->renderResponse ( 'Backend/List' );
+		}
 
     public function deleteAction(ServerRequestInterface $request): ResponseInterface
     {
@@ -50,7 +59,7 @@ class BackendController extends ActionController
             ->update(self::$table)
             ->set('deleted', 1)
             ->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($request->getQueryParams()['uid'], \PDO::PARAM_INT)))
-            ->execute();
+            ->executeStatement();
 
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         $url = $uriBuilder->buildUriFromRoute('web_WpMailqueueMaillist');
@@ -194,9 +203,9 @@ class BackendController extends ActionController
         }
 
         if ($returnCount) {
-            return $queryBuilder->execute()->fetchOne();
+            return $queryBuilder->executeQuery()->fetchOne();
         } else {
-            return $queryBuilder->execute();
+            return $queryBuilder->executeQuery();
         }
     }
 
